@@ -72,15 +72,16 @@ impl<'a> eframe::App for Application<'a> {
                 });
             CentralPanel::default().show(ctx, |ui| {
                 ScrollArea::vertical().show(ui, |ui| {
-                    let engine: &Engine = &self.root.engines[self.current_engine].data;
-                    ui.heading(engine.display_name);
-                    if let Some(authors) = &engine.authors {
+                    let engine: &EngineContainer = &self.root.engines[self.current_engine];
+                    let metadata: &Engine = &engine.metadata;
+                    ui.heading(metadata.display_name);
+                    if let Some(authors) = &metadata.authors {
                         ui.label(*authors);
                     }
-                    let source: Option<Hyperlink> = engine.source_code.map(|source_code| {
+                    let source: Option<Hyperlink> = metadata.source_code.map(|source_code| {
                         Hyperlink::from_label_and_url("Source Code", source_code)
                     });
-                    let website: Option<Hyperlink> = engine
+                    let website: Option<Hyperlink> = metadata
                         .website
                         .map(|website| Hyperlink::from_label_and_url("Website", website));
                     if source.is_some() || website.is_some() {

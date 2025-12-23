@@ -10,13 +10,13 @@ pub struct Engine<'a> {
     pub source_code: Option<&'a str>,
     pub website: Option<&'a str>,
     pub authors: Option<&'a str>,
-    pub versions: Vec<&'a str>,
-    pub modpacks: Vec<Modpack<'a>>,
 }
 
 pub struct EngineContainer<'a> {
     pub root: &'a str,
-    pub data: Engine<'a>,
+    pub versions: Vec<&'a str>,
+    pub modpacks: Vec<Modpack<'a>>,
+    pub metadata: Engine<'a>,
 }
 
 pub struct EngineRoot<'a> {
@@ -60,7 +60,7 @@ impl<'a> EngineRoot<'a> {
     /// Get the path of of the selected engine.
     pub fn engine_path(&self) -> IoResult<PathBuf> {
         let container: &EngineContainer = &self.engines[self.selected];
-        let engine: &Engine = &container.data;
+        let engine: &Engine = &container.metadata;
         let mut buf: PathBuf = PathBuf::from(self.location);
         buf.push(container.root);
         if buf.try_exists()? {
@@ -92,10 +92,8 @@ mod tests {
             source_code: Some("https://github.com/CodenameCrew/CodenameEngine/"),
             website: None,
             authors: Some("Codename Crew"),
-            versions: vec!["1.0.0"],
-            modpacks: Vec::new(),
         };
         assert_eq!(data.display_name, "Codename Engine");
-        assert_eq!(data.versions, vec!["1.0.0"]);
+        assert_eq!(data.authors, Some("Codename Crew"));
     }
 }
