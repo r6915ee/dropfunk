@@ -72,8 +72,8 @@ impl<'a> eframe::App for Application<'a> {
                 });
             CentralPanel::default().show(ctx, |ui| {
                 ScrollArea::vertical().show(ui, |ui| {
-                    let engine: &EngineContainer = &self.root.engines[self.current_engine];
-                    let metadata: &Engine = &engine.metadata;
+                    let engine: &Engine = &self.root.engines[self.current_engine];
+                    let metadata: &EngineMetadata = &engine.metadata;
                     ui.heading(metadata.display_name);
                     if let Some(authors) = &metadata.authors {
                         ui.label(*authors);
