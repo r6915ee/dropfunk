@@ -149,6 +149,16 @@ impl<'a> eframe::App for Application<'a> {
                 ui.vertical_centered(|ui| {
                     ui.heading("No Engines");
                     ui.label("No engines have been installed. To use Dropfunk, please install an engine.");
+                    ui.label("To install an engine:");
+                    ui.label("1. Create a subdirectory under the engines directory. This subdirectory contains \
+                        the versions of the engine, as well as metadata.");
+                    ui.label("2. Create a subdirectory under the previous directory with the version number as \
+                        the filename. Extract the downloaded engine into this subdirectory.");
+                    ui.label("3. If any modpacks were distributed alongside the downloaded engine, move them into a \
+                        specialized mods subdirectory under the main engine directory in order to keep the modpacks in-tact.");
+                    ui.label("4. Dropfunk will create a template JSON file that describes the engine's metadata. You \
+                        are free to configure this file as you please.");
+                    ui.label("5. At this point, you should be able to start using Dropfunk!");
                     if ui.button("Open Engines Directory").clicked() {
                         open::that(self.root.location).unwrap_or_else(|_| {
                             panic!(
