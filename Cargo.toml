@@ -1,0 +1,22 @@
+[workspace]
+members = ["libfunk"]
+resolver = "3"
+
+[workspace.package]
+authors = ["r6915ee <astergthefourth@gmail.com>"]
+
+[package]
+name = "dropfunk"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+colog = "1.4.0"
+directories = "6.0.0"
+eframe = "0.33.3"
+libfunk.path = "libfunk"
+log = "0.4.29"
+open = "5.3.3"
+
+[dev-dependencies]
+libfunk.path = "libfunk"
