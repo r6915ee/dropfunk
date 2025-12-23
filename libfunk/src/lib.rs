@@ -1,10 +1,11 @@
+use serde::{Deserialize, Serialize};
 use std::{
     io::{Error, ErrorKind, Result as IoResult},
     path::{Path, PathBuf},
 };
 
 /// A basic representation of an engine's metadata.
-#[derive(Default)]
+#[derive(Default, Serialize, Deserialize)]
 pub struct EngineMetadata<'a> {
     pub display_name: &'a str,
     pub source_code: Option<&'a str>,
@@ -74,7 +75,7 @@ impl<'a> EngineRoot<'a> {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Modpack<'a> {
     pub display_name: &'a str,
     pub version: &'a str,
