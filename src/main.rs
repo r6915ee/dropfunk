@@ -11,7 +11,7 @@ fn main() -> eframe::Result {
     };
 
     colog::default_builder()
-        .filter_level(LevelFilter::Warn)
+        .filter_level(LevelFilter::Info)
         .init();
 
     let project_dir: Option<ProjectDirs> =
@@ -23,15 +23,21 @@ fn main() -> eframe::Result {
 
     match std::fs::create_dir_all(data_dir) {
         Ok(_) => {
-            let root: EngineRoot = EngineRoot::builder()
+            let root: EngineRoot = match EngineRoot::builder()
                 .location(
                     data_dir
                         .to_str()
-                        .expect("Data directory is made up of invalid UTF-8 characters"),
+                        .expect("Data directory is made up of invalid UTF-8 characters")
+                        .to_string()
+                        .into(),
                 )
-                .build();
+                .build()
+            {
+                Ok(root) => root,
+                Err(e) => panic!("{}", e),
+            };
 
-            let current_engine: usize = root.selected;
+            let current_engine: usize = 0;
 
             eframe::run_native(
                 "Dropfunk",
@@ -50,14 +56,14 @@ fn main() -> eframe::Result {
     }
 }
 
-struct Application<'a> {
-    root: EngineRoot<'a>,
+struct Application {
+    root: EngineRoot,
     current_engine: usize,
-    current_version: Option<&'a str>,
+    current_version: Option<String>,
     current_modpack: Option<usize>,
 }
 
-impl<'a> eframe::App for Application<'a> {
+impl eframe::App for Application {
     fn update(&mut self, ctx: &egui::Context, _: &mut eframe::Frame) {
         use egui::{containers::scroll_area::ScrollBarVisibility, *};
         if !self.root.engines.is_empty() {
@@ -73,16 +79,17 @@ impl<'a> eframe::App for Application<'a> {
             CentralPanel::default().show(ctx, |ui| {
                 ScrollArea::vertical().show(ui, |ui| {
                     let engine: &Engine = &self.root.engines[self.current_engine];
-                    let metadata: &EngineMetadata = &engine.metadata;
-                    ui.heading(metadata.display_name);
-                    if let Some(authors) = &metadata.authors {
-                        ui.label(*authors);
+                    ui.heading(&self.root.display_names[self.current_engine]);
+                    if let Some(authors) = &self.root.authors[self.current_engine] {
+                        ui.label(authors);
                     }
-                    let source: Option<Hyperlink> = metadata.source_code.map(|source_code| {
-                        Hyperlink::from_label_and_url("Source Code", source_code)
-                    });
-                    let website: Option<Hyperlink> = metadata
-                        .website
+                    let source: Option<Hyperlink> = self.root.source_codes[self.current_engine]
+                        .as_ref()
+                        .map(|source_code| {
+                            Hyperlink::from_label_and_url("Source Code", source_code)
+                        });
+                    let website: Option<Hyperlink> = self.root.websites[self.current_engine]
+                        .as_ref()
                         .map(|website| Hyperlink::from_label_and_url("Website", website));
                     if source.is_some() || website.is_some() {
                         ui.horizontal(|ui| {
@@ -105,9 +112,9 @@ impl<'a> eframe::App for Application<'a> {
                                         Frame::NONE.fill(Color32::from_rgb(0, 0, 0)).show(
                                             ui,
                                             |ui| {
-                                                ui.heading($x.display_name);
-                                                ui.label($x.version);
-                                                ui.label($x.brief);
+                                                ui.heading(&*$x.display_name);
+                                                ui.label(&*$x.version);
+                                                ui.label(&*$x.brief);
                                             },
                                         );
                                     };
@@ -127,15 +134,15 @@ impl<'a> eframe::App for Application<'a> {
                     ui.horizontal(|ui| {
                         ui.menu_button("Current Version", |ui| {
                             for version in &*engine.versions {
-                                if ui.button(*version).clicked() {
-                                    self.current_version = Some(version);
+                                if ui.button(version).clicked() {
+                                    self.current_version = Some(version.clone());
                                     warn!("Set current engine version to {}", version);
                                 }
                             }
                         });
                         ui.menu_button("Current Modpack", |ui| {
                             for (index, modpack) in engine.modpacks.iter().enumerate() {
-                                if ui.button(modpack.display_name).clicked() {
+                                if ui.button(&*modpack.display_name).clicked() {
                                     self.current_modpack = Some(index);
                                     warn!("Set current modpack to {}", modpack.display_name);
                                 }
@@ -160,7 +167,7 @@ impl<'a> eframe::App for Application<'a> {
                         are free to configure this file as you please.");
                     ui.label("5. At this point, you should be able to start using Dropfunk!");
                     if ui.button("Open Engines Directory").clicked() {
-                        open::that(self.root.location).unwrap_or_else(|_| {
+                        open::that(&*self.root.location).unwrap_or_else(|_| {
                             panic!(
                                 "No openers could open directory location {}",
                                 self.root
