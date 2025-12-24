@@ -4,6 +4,7 @@ resolver = "3"
 
 [workspace.package]
 authors = ["r6915ee <astergthefourth@gmail.com>"]
+license = "MIT OR Apache-2.0"
 
 [package]
 name = "dropfunk"
