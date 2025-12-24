@@ -13,8 +13,8 @@ r6915ee
 * Manage multiple engine versions simultaneously
 * Modpacks are shared across engine versions
 * Extensive metadata support
-  * Unified metadata using JSON for both engines and modpacks
-  * Multiple optional values that can be used for UIs
+** Unified metadata using JSON for both engines and modpacks
+** Multiple optional values that can be used for UIs
 * Main backend is separate from the frontend, allowing third-party tools
 
 todo
