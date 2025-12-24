@@ -19,6 +19,7 @@ pkgs.mkShell {
       cargo
       rust-analyzer
       pre-commit
+      asciidoctor-with-extensions
     ]
     ++ libs;
   LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath libs;

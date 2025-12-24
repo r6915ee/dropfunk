@@ -1,0 +1,18 @@
+= Dropfunk
+:toc:
+r6915ee
+
+== Dropfunk
+
+*Dropfunk* is a transparent engine manager for https://funkin.me/[Funkin'].
+
+== Features
+
+* https://rust-lang.org/[Rust] and https://github.com/emilk/egui[egui]-based
+  for runtime performance and safety
+* Manage multiple engine versions simultaneously
+* Modpacks are shared across engine versions
+* Unified metadata using JSON for both engines and modpacks
+* Main backend is separate from the frontend, allowing third-party tools
+
+todo
